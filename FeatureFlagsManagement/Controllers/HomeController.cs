@@ -14,15 +14,24 @@ namespace FeatureFlagsManagement.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        //private readonly IFeatureManager _featureManager;
+        private readonly IFeatureManager _featureManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IFeatureManager featureManager)
         {
             _logger = logger;
+            _featureManager = featureManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
+            ViewData["Version"] = "3.1";
+
+            if (await _featureManager.IsEnabledAsync(MyFeatureManagementFlags.NewFeature2.ToString()))
+            {
+                ViewData["Version"] = "2.2";
+            }
+            
+            
             return View();
         }
 
